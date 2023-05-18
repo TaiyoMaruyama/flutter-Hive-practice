@@ -46,12 +46,15 @@ class ToDoTitle extends StatelessWidget {
                 onChanged: onChange,
                 activeColor: Colors.black,
               ),
-              Text(
-                taskName,
-                style: TextStyle(
-                  decoration: taskComplete
-                      ? TextDecoration.lineThrough
-                      : TextDecoration.none,
+              Expanded(
+                child: Text(
+                  taskName,
+                  overflow: TextOverflow.ellipsis,
+                  style: TextStyle(
+                    decoration: taskComplete
+                        ? TextDecoration.lineThrough
+                        : TextDecoration.none,
+                  ),
                 ),
               ),
             ],

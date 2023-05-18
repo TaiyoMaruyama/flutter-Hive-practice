@@ -10,8 +10,6 @@ class ToDoDataBase {
     toDoList = [
       ['このアプリはTODO管理です', false],
       ['ここにあなたのTODOを追加してください', false],
-      ['チェックボックスは完了の印です', true],
-      ['右端からスライドすると削除ボタンが出てきます', true],
     ];
   }
 

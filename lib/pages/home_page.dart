@@ -13,6 +13,8 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
+  double leftPosition = -1000;
+
   // reference the Hive box
   final _myBox = Hive.box('myBox');
   ToDoDataBase db = ToDoDataBase();
@@ -25,7 +27,6 @@ class _HomePageState extends State<HomePage> {
     } else {
       db.loadData();
     }
-
     super.initState();
   }
 
@@ -41,6 +42,7 @@ class _HomePageState extends State<HomePage> {
   void saveNewTask() {
     setState(() {
       db.toDoList.add([_controller.text, false]);
+      taskNaviAppear();
     });
     Navigator.of(context).pop();
     _controller.text = '';
@@ -63,8 +65,24 @@ class _HomePageState extends State<HomePage> {
   void deleteTask(int index) {
     setState(() {
       db.toDoList.removeAt(index);
+      taskNaviAppear();
     });
     db.upDataDataBase();
+  }
+
+  void taskNaviAppear() {
+    setState(() {
+      leftPosition = 4;
+      Future.delayed(const Duration(seconds: 3), () {
+        taskNaviDisappear();
+      });
+    });
+  }
+
+  void taskNaviDisappear() {
+    setState(() {
+      leftPosition = -1000;
+    });
   }
 
   @override
@@ -77,24 +95,13 @@ class _HomePageState extends State<HomePage> {
             'To Do',
           ),
         ),
-        elevation: 0,
+        elevation: 10.0,
       ),
-      body: Column(
-        children: [
-          const SizedBox(
-            height: 60.0,
-            child: Center(
-              child: Text(
-                'Your Todo',
-                style: TextStyle(
-                  fontWeight: FontWeight.bold,
-                  fontSize: 24,
-                ),
-              ),
-            ),
-          ),
-          Flexible(
-            child: ListView.builder(
+      body: Padding(
+        padding: const EdgeInsets.symmetric(vertical: 12.0),
+        child: Stack(
+          children: [
+            ListView.builder(
               itemCount: db.toDoList.length,
               itemBuilder: (BuildContext context, int index) {
                 return ToDoTitle(
@@ -105,8 +112,38 @@ class _HomePageState extends State<HomePage> {
                 );
               },
             ),
-          ),
-        ],
+            Positioned(
+              bottom: 8.0,
+              left: leftPosition,
+              child: Container(
+                width: 200.0,
+                height: 50.0,
+                decoration: BoxDecoration(
+                  color: Colors.white.withOpacity(0.8),
+                  borderRadius: BorderRadius.circular(10.0),
+                ),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.only(left: 10.0),
+                      child: Text(
+                        'Your Tasks：${db.toDoList.length}',
+                        style: const TextStyle(
+                          fontSize: 16.0,
+                        ),
+                      ),
+                    ),
+                    IconButton(
+                      onPressed: taskNaviDisappear,
+                      icon: const Icon(Icons.close),
+                    )
+                  ],
+                ),
+              ),
+            )
+          ],
+        ),
       ),
       floatingActionButton: FloatingActionButton(
         elevation: 10.0,
